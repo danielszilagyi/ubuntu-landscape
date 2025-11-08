@@ -1,0 +1,38 @@
+services:
+  landscape:
+    image: landscape:local
+    build:
+      context: .
+    ports:
+      - "80:80"
+      - "443:443"
+      - "6554:6554"
+    environment:
+      # Landscape bootstrap / quickstart inputs
+      EMAIL: "you@example.com"
+      TOKEN: ${TOKEN} # put this in .env
+      HOSTNAME: ${HOSTNAME}
+      DOMAIN: ${DOMAIN}
+      TIMEZONE: "Europe/Budapest"
+
+      # SMTP settings
+      SMTP_HOST: "localhost"
+      SMTP_PORT: "587"
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+      # Optional / informational
+      LANDSCAPE_VERSION: "24.04"
+    volumes:
+      - landscape-data:/var/lib/landscape
+      - landscape-httpd:/etc/apache2
+      - landscape-etc:/etc/landscape
+      - landscape-pg:/var/lib/postgresql
+      - landscape-rmq:/var/lib/rabbitmq
+
+volumes:
+  landscape-data:
+  landscape-httpd:
+  landscape-etc:
+  landscape-pg:
+  landscape-rmq:
