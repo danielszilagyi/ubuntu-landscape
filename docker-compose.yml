@@ -32,6 +32,21 @@ services:
       - landscape-rmq:/var/lib/rabbitmq
       #- ./certs/landscape_server.pem:/etc/ssl/certs/landscape_server.pem:ro
       #- ./certs/landscape_server.key:/etc/ssl/private/landscape_server.key:ro
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP -> HTTPS redirect handled by Traefik
+      - "traefik.http.routers.landscape-http.rule=Host(`${HOSTNAME}.${DOMAIN}`)"
+      - "traefik.http.routers.landscape-http.entrypoints=web"
+      - "traefik.http.routers.landscape-http.middlewares=landscape-redirect-https"
+      - "traefik.http.middlewares.landscape-redirect-https.redirectscheme.scheme=https"
+
+      # TCP router with TLS passthrough to Apache's :443 inside the container
+      - "traefik.tcp.routers.landscape-tls.rule=HostSNI(`${HOSTNAME}.${DOMAIN}`)"
+      - "traefik.tcp.routers.landscape-tls.entrypoints=websecure"
+      - "traefik.tcp.routers.landscape-tls.tls.passthrough=true"
+      - "traefik.tcp.routers.landscape-tls.service=landscape-tls"
+      - "traefik.tcp.services.landscape-tls.loadbalancer.server.port=443"
 
 volumes:
   landscape-data:
