@@ -7,6 +7,7 @@ services:
       - "80:80"
       - "443:443"
       - "6554:6554"
+    hostname: ${HOSTNAME}.${DOMAIN}
     environment:
       # Landscape bootstrap / quickstart inputs
       EMAIL: "you@example.com"
@@ -29,6 +30,8 @@ services:
       - landscape-etc:/etc/landscape
       - landscape-pg:/var/lib/postgresql
       - landscape-rmq:/var/lib/rabbitmq
+      #- ./certs/landscape_server.pem:/etc/ssl/certs/landscape_server.pem:ro
+      #- ./certs/landscape_server.key:/etc/ssl/private/landscape_server.key:ro
 
 volumes:
   landscape-data:
