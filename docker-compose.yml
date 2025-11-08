@@ -1,13 +1,17 @@
+networks:
+  hosting_net: # use a network where your ingress is connected
+    external: true
 services:
   landscape:
     image: landscape:local
     build:
       context: .
     ports:
-      - "80:80"
-      - "443:443"
-      - "6554:6554"
+      - "80"
+      - "443"
+      - "6554"
     hostname: ${HOSTNAME}.${DOMAIN}
+    networks: [ hosting_net ]
     environment:
       # Landscape bootstrap / quickstart inputs
       EMAIL: "you@example.com"
@@ -30,8 +34,8 @@ services:
       - landscape-etc:/etc/landscape
       - landscape-pg:/var/lib/postgresql
       - landscape-rmq:/var/lib/rabbitmq
-      #- ./certs/landscape_server.pem:/etc/ssl/certs/landscape_server.pem:ro
-      #- ./certs/landscape_server.key:/etc/ssl/private/landscape_server.key:ro
+      # - <path_to_fullchain.cer>:/etc/ssl/certs/landscape_server.pem:ro
+      # - <path_to_tls_key>:/etc/ssl/private/landscape_server.key:ro
     labels:
       - "traefik.enable=true"
 
